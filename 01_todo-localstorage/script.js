@@ -19,6 +19,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     tasks.push(newTask);
     saveTasks();
+    renderTask(newTask);
     todoInput.value = ""; // clears the input field
     console.log(tasks);
   });
@@ -26,9 +27,25 @@ document.addEventListener("DOMContentLoaded", () => {
   function renderTask(task) {
     const li = document.createElement("li");
     li.setAttribute("data-id", task.id);
+    if (task.completed) li.classList.add("completed");
     li.innerHTML = `
     <span>${task.text}</span>
     <button>Delete</button>`;
+
+    li.addEventListener("click", (e) => {
+      if (e.target.tagname === "BUTTON") return;
+      task.completed = !task.completed;
+      li.classList.toggle("completed");
+      saveTasks();
+    });
+
+    li.querySelector("button").addEventListener("click", (e) => {
+      e.stopPropagation(); // prevent toggle from firing
+      tasks = tasks.filter((t) => t.id !== task.id);
+      li.remove();
+      saveTasks();
+    });
+
     todoList.appendChild(li);
   }
 
